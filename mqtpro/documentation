@@ -1,0 +1,167 @@
+1.localhost(broker)
+2.mqt used to send data
+main
+3.publisher
+4.subscriber
+5.topic
+through net connect to the localhost
+then i can publish
+there will be topic
+with that topic with the broker name publish the message
+once i publish it
+there will be a subscriber , at that time he will subscribe with the same topic
+suppose if the topic is different he wont be access any messages
+broker won't store the messages
+1.once the publisher publishes the messages
+at that time she will be subscribing the messages
+we can send messages/files ->through mqtt
+we have to create a service
+we cant create service for publisher
+but we can create a service -> meaning
+if we create a service
+    that subscriber will be keep on subscribing to the topic
+once the publisher publishes
+    the subscriber already prepared ,to subscribe
+    he will get the message,read the message and send it to gitups
+broker(like a medium to publish the subscriber)
+    n no of publisher will publish the data to the broker
+    n no of subscriber can also subscribe the data
+provided publisher & subscriber topic should be similar
+
+while connecting we need username & password:
+    io ipvc server
+    clientid
+    while connecting with clientids
+        we can publish and subscribe
+    if dont have client id
+        we can publish ,but we cant subscribe
+
+come to DVC :
+    they are publishing the files
+    we have to subscribe it
+    for that we can use python/javascript code
+    also we can subscribe the file through terminal also
+    using mqtt pub/ mqtt sub
+    same thing do it django
+
+In DVC:
+    we are subscribing 2 data right now
+    1.30 second decoded -----> he said he will send the topic
+    2.1minute
+
+1.try to publish/subscribe the data 1st
+2.then file
+3.i dont no how to publishing the files
+4.we can send the header   1st
+    we should know how many chunks/size of data(1MB)
+    end keyword
+
+1.MQTT -> Message Queuing Telemetry Transport
+2.Telemetry -> process of collecting and transmitting data
+    from remote/inaccessible sources to a central location
+
+About MQTT:
+    MQTT follows a publish-subscribe pattern,
+    where clients can publish messages to a topic and subscribe to receive messages on topics of interest.
+        if one client publish message to a topic- others who are subscribed to that topic will receive the message
+as a client:
+1.mqtt connect
+2.subscribe
+3.you will get the messages if the publisher sending
+as a publisher:
+1.create a mqtt configuration
+2.create a topic
+3.allow them to subscribe
+
+Exception handling:
+1. sock.connect(sa) TimeoutError: timed out
+sol: check wheather the HOST is working/running
+
+1.message="hello from django"
+client.publish(settings.MQTT_TOPIC, message, qos=0)# Use appropriate QoS level (0, 1, or 2) as needed
+2.def my_view(request):
+    client.subscribe(settings.MQTT_TOPIC)  # Subscribe to the desired topic
+    return JsonResponse({"Subscribed to MQTT topic":settings.MQTT_TOPIC},safe=False)  # Return a response to the client
+mqtt(django project name),mqtpro,mqtapp(django app name),static,received.cdf give me the directory path
+3.def my_view(request):
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    return JsonResponse(current_directory,safe=False)
+
+web socket:
+    1.communication protocol - full duplex
+    2.initiated using http(javascript)
+    #text will go as plain text(without encryption)
+        socket = new WebSocket("ws://" + window.location.host + "/ws/mqtt_subscribe/");
+    #text will go as plain text(with encryption and reliable)
+        socket = new WebSocket("wss://" + window.location.host + "/ws/mqtt_subscribe/");
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>MQTT Messages</title>
+</head>
+<body>
+    <h1>MQTT Messages</h1>
+<!--there is an empty <ul> (unordered list) element with an id of "messages".
+This is the placeholder where the received MQTT messages will be appended as list items (<li>).-->
+    <ul id="messages"></ul>
+<!--concatenating ws
+which represents the current host and port of the web page
+WebSocket path
+socket.onmessage event handler is defined to handle the received MQTT messages
+creates a new <li>->createElement -->
+    <script>
+        // Establish a WebSocket connection
+        var socket = new WebSocket("wss://" + window.location.host + "/ws/mqtt_subscribe/");
+        var socket = new WebSocket("wss://" + window.location.host + "/mqtt_messages/");
+        // When a message is received, append it to the list
+        socket.onmessage = function(event) {
+            var li = document.createElement("li");
+            li.innerHTML = event.data;
+            document.getElementById("messages").appendChild(li);
+        }
+    </script>
+</body>
+</html>
+
+client = mqtt.Client(settings.MQTT_CLIENT_ID)
+count = 0
+
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print(f'Connected to {settings.MQTT_BROKER_HOST} broker successfully  ')
+    else:
+        print('Bad connection./check username/password. Code:', rc)
+
+def on_message(client, userdata, msg):
+    global count
+    count += 1
+    time = timezone.now()
+    current_time = time.strftime("%Y-%m-%d %H:%M:%S")
+    print(f'Received message topic: {msg.topic},Message/File payload: {msg.payload}')
+    cmd = f"echo 'Time: {current_time},Total message received : {count}'"
+    subprocess.Popen(cmd, shell=True)
+
+ client.username_pw_set(settings.MQTT_USERNAME, settings.MQTT_PASSWORD)
+client.connect(
+        host=settings.MQTT_BROKER_HOST,
+        port=settings.MQTT_BROKER_PORT,
+        keepalive=settings.MQTT_KEEPALIVE
+    )
+client.subscribe(settings.MQTT_TOPIC)
+
+client.loop_start()
+message="hello from django"
+client.publish(settings.MQTT_TOPIC, message, qos=0)
+client.on_connect = on_connect
+client.on_message = on_message
+
+b'<HEALTH_STATUS DCU="DCU AT RECONNECT OFFICE" SERIALNUM="10132124">\n\
+<DCU_DETAILS ATTRIBUTE_1="HVPNL" ATTRIBUTE_2="PANIPAT" ATTRIBUTE_3="220kV"/>\n\t
+<DCU_STATUS POWER="ON" TIME="2023-04-17 10:24:30" ACTIVE_SINCE="2023-04-16 15:30:00" TIME_SYNCHED="NO">\n\t\t
+<LINK_STATUS CONNECTED_ON="GPRS" ACTIVE_SIM="SIM2"/>\n\t</DCU_STATUS>\n\t<METERS>\n\t\t
+<METER ID="21" BAY="RECONNECT OFFICE" IP_ADDRESS="192.168.11.102" COMMUNICATION_STATUS="DISCONNECTED" TIME_SYNCHED="NO"/>\n\t\t
+<METER ID="112" BAY="GENUS-1" IP_ADDRESS="192.168.11.101" COMMUNICATION_STATUS="DISCONNECTED" TIME_SYNCHED="NO"/>\n\t\t
+<METER ID="113" BAY="GENUS-2" IP_ADDRESS="192.168.11.100" COMMUNICATION_STATUS="DISCONNECTED" TIME_SYNCHED="NO"/>\n\t
+</METERS>\n</HEALTH_STATUS>'

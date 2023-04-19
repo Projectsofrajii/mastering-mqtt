@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>MQTT Messages</title>
+</head>
+<body>
+    <h1>MQTT Messages</h1>
+    <ul id="messages"></ul>
+
+    <script>
+        // Establish a WebSocket connection
+        var socket = new WebSocket("ws://" + window.location.host + "/ws/mqtt_subscribe/");
+
+        // When a message is received, append it to the list
+        socket.onmessage = function(event) {
+            var li = document.createElement("li");
+            li.innerHTML = event.data;
+            document.getElementById("messages").appendChild(li);
+        }
+    </script>
+</body>
+</html>
